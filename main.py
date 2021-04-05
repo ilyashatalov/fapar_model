@@ -1,3 +1,5 @@
+import csv
+from datetime import datetime
 from pprint import pformat
 from lib.logger import logger
 from utils.config_loader import ConfigLoader
@@ -5,7 +7,6 @@ from utils.raw_data_loader import DirectoryScanner
 from utils.pixel_mapper import PixelMapper
 from utils.fapar_calc import FaparCalc
 from utils.model_draw import FaparModel
-import matplotlib.pyplot as plt
 
 
 if __name__ == '__main__':
@@ -24,8 +25,15 @@ if __name__ == '__main__':
                 rc = mapp.get_geo2raster(point[2:4])
                 if rc:
                     b = FaparCalc(mapp.metadata, rc)
+                    if b.mean == 0.0:
+                        continue
                     fapar_results.append((point, scene, mapp.metadata['DATE_ACQUIRED'], b.DOY, b.mean, b.sd))
-    print(pformat(fapar_results))
+                    print(b.mean)
+    #print(pformat(fapar_results))
+    date_string = f'{datetime.now():%Y-%m-%d_%H:%M:%S%z}'
+    with open('fapar_results_{}.csv'.format(date_string), 'w') as f:
+        w = csv.writer(f)
+        w.writerows(fapar_results)
     a = FaparModel(fapar_results)
     b = a.draw_model()
 

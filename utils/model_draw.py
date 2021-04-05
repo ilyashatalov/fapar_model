@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from pprint import pformat
 
 
 class FaparModel:
@@ -16,6 +17,8 @@ class FaparModel:
         z_array = []
         H_array = []
         W_array = []
+        pointsv = []
+        pointst = []
 
         for product in self.data:
             doy = product[3]
@@ -26,9 +29,15 @@ class FaparModel:
                 continue
             elif sigma <= 3e-4:
                 sigma = 1  # W = 1
+            pointsv.append(value)
+            pointst.append(doy)
             z_array.append(value)
-            H_array.append([1, np.cos(2 * np.pi * t), np.cos(2 * 2 * np.pi * t), np.cos(3 * 2 * np.pi * t),
-                            np.cos(4 * 2 * np.pi * t), np.cos(5 * 2 * np.pi * t), np.cos(6 * 2 * np.pi * t),
+            H_array.append([1, np.cos(2 * np.pi * t),
+                            np.cos(2 * 2 * np.pi * t),
+                            np.cos(3 * 2 * np.pi * t),
+                            np.cos(4 * 2 * np.pi * t),
+                            np.cos(5 * 2 * np.pi * t),
+                            np.cos(6 * 2 * np.pi * t),
                             np.sin(4 * np.pi * t) - 2 * np.sin(2 * np.pi * t),
                             np.sin(6 * np.pi * t) - 3 * np.sin(2 * np.pi * t),
                             np.sin(8 * np.pi * t) - 4 * np.sin(2 * np.pi * t),
@@ -62,20 +71,22 @@ class FaparModel:
         print("etalb:", self.etalonb)
         print("etalc:", self.etalonc)
         for t in np.linspace(0, 1, 365):
+            j = 0
+            f = 0
             for i in range(0, 6):
                 j = i + 1
                 f = f + (b[i] * np.cos(2 * np.pi * j * t) + c[i] * np.sin(2 * np.pi * j * t))
             F.append(a0 + f)
-            f = 0
-            j = 0
+
+        print(pformat(F))
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        ax.text(0, 1, "data from file")
         ax.text(0, 0.96, "a0: {}".format(a0))
         ax.text(0, 0.92, "b: {}".format(myFormattedListb))
         ax.text(0, 0.88, "c: {}".format(myFormattedListc))
-        ax.axis([0, 365, 0, 1])
+        ax.axis([self.Gb, self.Ge, 0, 1])
         ax.plot(F)
+        ax.plot(pointst, pointsv, 'ro')
         plt.show()
         return fig
 

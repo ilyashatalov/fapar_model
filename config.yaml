@@ -1,7 +1,7 @@
-workdir: '/Volumes/Samsung_T5/LANDSAT/L7/2002/'
+workdir: '/Users/ish/FaparData/2001-2002/'
 results_filename: 'determined_rc.yaml'
 points:
-  - ['point 1', 'type1', 48.449118, 45.210591]
+  - ['point 1', 'type1', 48.763127, 45.321932]
 #  - ['point 2', 'type2', 48.309579, 46.301408]
 polygons:
   - name: 'putilkovo'
